@@ -16,7 +16,8 @@ class CoffeeApp(QtWidgets.QMainWindow):
 
         self.tableWidget.setRowCount(len(records))
         self.tableWidget.setColumnCount(7)
-        self.tableWidget.setHorizontalHeaderLabels(["ID", "Название сорта", "Степень обжарки", "Молотый/в зернах", "Описание вкуса", "Цена", "Объем упаковки"])
+        self.tableWidget.setHorizontalHeaderLabels(
+            ["ID", "Название сорта", "Степень обжарки", "Молотый/в зернах", "Описание вкуса", "Цена", "Объем упаковки"])
 
         for row_idx, row_data in enumerate(records):
             for col_idx, col_data in enumerate(row_data):
