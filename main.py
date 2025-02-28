@@ -7,6 +7,8 @@ class CoffeeApp(QtWidgets.QMainWindow):
         super().__init__()
         uic.loadUi("main.ui", self)
         self.load_data()
+        self.pushButtonAdd.clicked.connect(self.add_record)
+        self.pushButtonEdit.clicked.connect(self.edit_record)
 
     def load_data(self):
         connection = sqlite3.connect("coffee.sqlite")
@@ -25,6 +27,92 @@ class CoffeeApp(QtWidgets.QMainWindow):
 
         cursor.close()
         connection.close()
+
+    def add_record(self):
+        self.add_edit_form = AddEditCoffeeForm(self)
+        self.add_edit_form.show()
+
+    def edit_record(self):
+        selected_row = self.tableWidget.currentRow()
+        if selected_row >= 0:
+            record_id = self.tableWidget.item(selected_row, 0).text()
+            self.add_edit_form = AddEditCoffeeForm(self, record_id)
+            self.add_edit_form.show()
+
+
+class AddEditCoffeeForm(QtWidgets.QDialog):
+    def __init__(self, parent, record_id=None):
+        super().__init__(parent)
+        uic.loadUi("addEditCoffeeForm.ui", self)
+        self.parent = parent
+        self.record_id = record_id
+        if record_id:
+            self.load_record()
+        self.buttonBox.accepted.connect(self.save_record)
+        self.buttonBox.rejected.connect(self.close)
+
+    def load_record(self):
+        connection = sqlite3.connect("coffee.sqlite")
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM coffee WHERE id=?", (self.record_id,))
+        record = cursor.fetchone()
+        if record:
+            self.lineEditID.setText(str(record[0]))
+            self.lineEditName.setText(record[1])
+            self.lineEditRoast.setText(record[2])
+            self.lineEditType.setText(record[3])
+            self.lineEditDescription.setText(record[4])
+            self.lineEditPrice.setText(str(record[5]))
+            self.lineEditVolume.setText(str(record[6]))
+        cursor.close()
+        connection.close()
+
+    def save_record(self):
+        try:
+            id = int(self.lineEditID.text())
+            name = self.lineEditName.text()
+            roast = self.lineEditRoast.text()
+            type = self.lineEditType.text()
+            description = self.lineEditDescription.text()
+            price = float(self.lineEditPrice.text())
+            volume = float(self.lineEditVolume.text())
+
+            print(
+                f"id: {id}, name: {name}, roast: {roast}, type: {type}, description: {description}, price: {price}, volume: {volume}")
+
+            connection = sqlite3.connect("coffee.sqlite")
+            cursor = connection.cursor()
+
+            if self.record_id:
+                cursor.execute("""UPDATE coffee SET 
+                                name=?, 
+                                roast=?, 
+                                type=?, 
+                                description=?, 
+                                price=?, 
+                                volume=? 
+                                WHERE id=?""",
+                               (name, roast, type, description, price, volume, id))
+                print(
+                    f"UPDATE coffee SET name={name}, roast={roast}, type={type}, description={description}, price={price}, volume={volume} WHERE id={id}")
+            else:
+                cursor.execute("""INSERT INTO coffee (id, name, roast, type, description, price, volume) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                               (id, name, roast, type, description, price, volume))
+                print(
+                    f"INSERT INTO coffee (id, name, roast, type, description, price, volume) VALUES ({id}, {name}, {roast}, {type}, {description}, {price}, {volume})")
+
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+            # Перезагрузка данных в таблице
+            self.parent.load_data()
+            self.close()
+        except ValueError as e:
+            QtWidgets.QMessageBox.critical(self, "Ошибка", f"Неверный тип данных: {e}")
+        except sqlite3.Error as e:
+            QtWidgets.QMessageBox.critical(self, "Ошибка базы данных", f"Ошибка базы данных: {e}")
 
 
 def main():
