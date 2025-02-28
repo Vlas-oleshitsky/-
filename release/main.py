@@ -1,17 +1,23 @@
+import os
 import sqlite3
-from PyQt6 import QtWidgets, uic
+from PyQt6 import QtWidgets
+from UI.main_ui import Ui_CoffeeApp
+from UI.addEditCoffeeForm_ui import Ui_AddEditCoffeeForm
+
+# Путь к базе данных
+database_path = os.path.join(os.path.dirname(__file__), "data", "coffee.sqlite")
 
 
-class CoffeeApp(QtWidgets.QMainWindow):
+class CoffeeApp(QtWidgets.QMainWindow, Ui_CoffeeApp):
     def __init__(self):
         super().__init__()
-        uic.loadUi("main.ui", self)
+        self.setupUi(self)
         self.load_data()
         self.pushButtonAdd.clicked.connect(self.add_record)
         self.pushButtonEdit.clicked.connect(self.edit_record)
 
     def load_data(self):
-        connection = sqlite3.connect("coffee.sqlite")
+        connection = sqlite3.connect(database_path)
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM coffee")
         records = cursor.fetchall()
@@ -40,10 +46,10 @@ class CoffeeApp(QtWidgets.QMainWindow):
             self.add_edit_form.show()
 
 
-class AddEditCoffeeForm(QtWidgets.QDialog):
+class AddEditCoffeeForm(QtWidgets.QDialog, Ui_AddEditCoffeeForm):
     def __init__(self, parent, record_id=None):
         super().__init__(parent)
-        uic.loadUi("addEditCoffeeForm.ui", self)
+        self.setupUi(self)
         self.parent = parent
         self.record_id = record_id
         if record_id:
@@ -52,7 +58,7 @@ class AddEditCoffeeForm(QtWidgets.QDialog):
         self.buttonBox.rejected.connect(self.close)
 
     def load_record(self):
-        connection = sqlite3.connect("coffee.sqlite")
+        connection = sqlite3.connect(database_path)
         cursor = connection.cursor()
         cursor.execute("SELECT * FROM coffee WHERE id=?", (self.record_id,))
         record = cursor.fetchone()
@@ -80,7 +86,7 @@ class AddEditCoffeeForm(QtWidgets.QDialog):
             print(
                 f"id: {id}, name: {name}, roast: {roast}, type: {type}, description: {description}, price: {price}, volume: {volume}")
 
-            connection = sqlite3.connect("coffee.sqlite")
+            connection = sqlite3.connect(database_path)
             cursor = connection.cursor()
 
             if self.record_id:
@@ -96,11 +102,11 @@ class AddEditCoffeeForm(QtWidgets.QDialog):
                 print(
                     f"UPDATE coffee SET name={name}, roast={roast}, type={type}, description={description}, price={price}, volume={volume} WHERE id={id}")
             else:
-                cursor.execute("""INSERT INTO coffee (id, name, roast, type, description, price, volume) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?)""",
-                               (id, name, roast, type, description, price, volume))
+                cursor.execute("""INSERT INTO coffee (name, roast, type, description, price, volume) 
+                                VALUES (?, ?, ?, ?, ?, ?)""",
+                               (name, roast, type, description, price, volume))
                 print(
-                    f"INSERT INTO coffee (id, name, roast, type, description, price, volume) VALUES ({id}, {name}, {roast}, {type}, {description}, {price}, {volume})")
+                    f"INSERT INTO coffee (name, roast, type, description, price, volume) VALUES ({name}, {roast}, {type}, {description}, {price}, {volume})")
 
             connection.commit()
             cursor.close()

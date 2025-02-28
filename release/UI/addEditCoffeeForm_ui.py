@@ -1,0 +1,47 @@
+from PyQt6 import QtCore, QtGui, QtWidgets
+
+class Ui_AddEditCoffeeForm(object):
+    def setupUi(self, AddEditCoffeeForm):
+        AddEditCoffeeForm.setObjectName("AddEditCoffeeForm")
+        AddEditCoffeeForm.resize(400, 300)
+        self.verticalLayout = QtWidgets.QVBoxLayout(AddEditCoffeeForm)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.lineEditID = QtWidgets.QLineEdit(AddEditCoffeeForm)
+        self.lineEditID.setObjectName("lineEditID")
+        self.verticalLayout.addWidget(self.lineEditID)
+        self.lineEditName = QtWidgets.QLineEdit(AddEditCoffeeForm)
+        self.lineEditName.setObjectName("lineEditName")
+        self.verticalLayout.addWidget(self.lineEditName)
+        self.lineEditRoast = QtWidgets.QLineEdit(AddEditCoffeeForm)
+        self.lineEditRoast.setObjectName("lineEditRoast")
+        self.verticalLayout.addWidget(self.lineEditRoast)
+        self.lineEditType = QtWidgets.QLineEdit(AddEditCoffeeForm)
+        self.lineEditType.setObjectName("lineEditType")
+        self.verticalLayout.addWidget(self.lineEditType)
+        self.lineEditDescription = QtWidgets.QLineEdit(AddEditCoffeeForm)
+        self.lineEditDescription.setObjectName("lineEditDescription")
+        self.verticalLayout.addWidget(self.lineEditDescription)
+        self.lineEditPrice = QtWidgets.QLineEdit(AddEditCoffeeForm)
+        self.lineEditPrice.setObjectName("lineEditPrice")
+        self.verticalLayout.addWidget(self.lineEditPrice)
+        self.lineEditVolume = QtWidgets.QLineEdit(AddEditCoffeeForm)
+        self.lineEditVolume.setObjectName("lineEditVolume")
+        self.verticalLayout.addWidget(self.lineEditVolume)
+        self.buttonBox = QtWidgets.QDialogButtonBox(AddEditCoffeeForm)
+        self.buttonBox.setObjectName("buttonBox")
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Cancel | QtWidgets.QDialogButtonBox.StandardButton.Ok)
+        self.verticalLayout.addWidget(self.buttonBox)
+
+        self.retranslateUi(AddEditCoffeeForm)
+        QtCore.QMetaObject.connectSlotsByName(AddEditCoffeeForm)
+
+    def retranslateUi(self, AddEditCoffeeForm):
+        _translate = QtCore.QCoreApplication.translate
+        AddEditCoffeeForm.setWindowTitle(_translate("AddEditCoffeeForm", "Добавить/Редактировать запись"))
+        self.lineEditID.setPlaceholderText(_translate("AddEditCoffeeForm", "ID"))
+        self.lineEditName.setPlaceholderText(_translate("AddEditCoffeeForm", "Название сорта"))
+        self.lineEditRoast.setPlaceholderText(_translate("AddEditCoffeeForm", "Степень обжарки"))
+        self.lineEditType.setPlaceholderText(_translate("AddEditCoffeeForm", "Молотый/в зернах"))
+        self.lineEditDescription.setPlaceholderText(_translate("AddEditCoffeeForm", "Описание вкуса"))
+        self.lineEditPrice.setPlaceholderText(_translate("AddEditCoffeeForm", "Цена"))
+        self.lineEditVolume.setPlaceholderText(_translate("AddEditCoffeeForm", "Объем упаковки"))
